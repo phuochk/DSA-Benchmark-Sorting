@@ -5,7 +5,10 @@
 - **Thời gian học:** 2025-2026
 - **Họ tên sinh viên:** Nguyễn Bá Phước
 - **MSSV:** 25120422
-
+- **Họ tên sinh viên:** Lê Tấn Tài
+- **MSSV:** 25120422
+- **Họ tên sinh viên:** Nguyễn Bá Phước
+- **MSSV:** 25120422
 ---
 
 ## 1. Thuật toán cài đặt tốt nhất ở lần chạy đầu tiên (Phase 1)
