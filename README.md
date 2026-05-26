@@ -1,58 +1,59 @@
-# BÁO CÁO ĐỒ ÁN: BENCHMARK SORTING ALGORITHMS
+# Báo Cáo Đồ Án: Tối Ưu Thuật Toán Sắp Xếp
 
-## 1. Thông tin chung
-* **Tên môn học:** Cấu trúc dữ liệu và giải thuật
-* **Thời gian học:** Học kỳ 2, Năm học 2025 - 2026
-* **Họ và tên sinh viên:** Nguyễn Bá Phước
-* **MSSV:** 25120422
-
----
-
-## 2. Thuật toán cài đặt tốt nhất ở Lần 1 (Phase 1)
-Trong lần chạy đầu tiên, ưu tiên hàng đầu là tính đúng đắn và sự ổn định tổng quát. Các thuật toán được chọn:
-
-* **Bài A (int - Integer Sort): Quick Sort với Phân hoạch Hoare.**
-  * **Tối ưu hóa:** Sử dụng vòng lặp `while` thay vì phân hoạch Lomuto, kết hợp kỹ thuật chọn chốt Median-of-Three.
-  * **Lý do tốt nhất:** Phân hoạch Hoare sử dụng hai con trỏ quét ngược chiều nhau, điều này cực kỳ thân thiện với bộ nhớ đệm (Cache L1/L2) của CPU. Thuật toán hoạt động In-place (O(1) không gian), không tốn thời gian cấp phát bộ nhớ phụ như Merge Sort.
-* **Bài B (strlexi) & C (strlenlexi): Merge Sort thao tác trên mảng con trỏ.**
-  * **Tối ưu hóa:** Thay vì hoán vị các chuỗi ký tự lớn, thuật toán chỉ hoán vị các con trỏ `char*` (hoặc chỉ số mảng) trỏ đến các chuỗi đó. 
-  * **Lý do tốt nhất:** Các thuật toán cơ bản khác như Quick Sort chuỗi rất dễ bị suy biến thành O(N^2) khi gặp mảng chứa nhiều chuỗi trùng lặp hoặc mảng đã sắp xếp. Merge Sort luôn đảm bảo độ phức tạp thời gian O(N log N) trong mọi trường hợp (Worst-case), an toàn để qua toàn bộ các test cơ bản.
+## Thông tin cá nhân
+- **Tên môn học:** Cấu trúc dữ liệu và giải thuật
+- **Thời gian học:** 2025-2026
+- **Họ tên sinh viên:** Nguyễn Bá Phước
+- **MSSV:** 25120422
 
 ---
 
-## 3. Chiến thuật sinh Test Case trong `test_gen.cpp`
-File `test_gen.cpp` sử dụng thư viện `<random>` (chuẩn C++23) để tạo ra các bộ test bẫy (Killer Tests). Mục tiêu của các test này là đánh vào điểm yếu kiến trúc (trượt dự đoán rẽ nhánh, chi phí gọi hàm so sánh, suy biến độ phức tạp) của các thuật toán chuẩn như `std::sort` hoặc Quick Sort / Merge Sort cơ bản, từ đó làm tăng mạnh thời gian chạy của chúng.
+## 1. Thuật toán cài đặt tốt nhất ở lần chạy đầu tiên (Phase 1)
 
-### Bài A (int): Ép suy biến phân hoạch
-* **Test 1 (Random):** Đánh giá tốc độ trần của thuật toán.
-* **Test 2 (Zig-zag):** Giá trị Max và Min đan xen liên tục. Mục tiêu đánh lừa các thuật toán Quick Sort có bộ chọn chốt (pivot) cố định ở đầu/giữa/cuối, làm phân hoạch mất cân bằng nghiêm trọng.
-* **Test 3 (Massive Duplicates):** Mảng 100.000 phần tử nhưng chỉ có 3 giá trị (-1, 0, 1). Ép Quick Sort không có cơ chế 3-way partition rơi vào vòng lặp vô hạn hoặc suy biến thành O(N^2).
-* **Test 4 (Reverse) & Test 5 (Nearly Sorted):** Ép Insertion Sort và Quick Sort phải duyệt qua các mảng cực đoan, gây ra Branch Misprediction (Dự đoán sai rẽ nhánh) ngắt quãng CPU.
+Ở giai đoạn 1, các thuật toán được lựa chọn tập trung vào việc vượt qua giới hạn của các hàm sắp xếp truyền thống ($O(N \log N)$) bằng cách khai thác đặc trưng của dữ liệu.
 
-### Bài B (strlexi): Vắt kiệt hàm so sánh chuỗi
-* **Test 1 (Deep Prefix):** Các chuỗi giống hệt nhau ở 98 ký tự đầu, chỉ khác 2 ký tự cuối. Mục đích: Ép hàm `strcmp` của Lần 1 phải duyệt 98 vòng lặp thừa thãi cho mỗi lần so sánh hai chuỗi.
-* **Test 2 (Clone Bomb):** Toàn bộ chuỗi nhân bản giống nhau 100%. Gây tràn Stack cho các hàm đệ quy rẽ nhánh kém.
-* **Test 3 (Binary Alphabet):** Chuỗi chỉ chứa ký tự 'a' và 'b'. Dồn cục dữ liệu, phá vỡ tính phân tán của Radix Sort thông thường.
-* **Test 4 (Length Stairs) & Test 5 (Reverse):** Bẫy lỗi tràn viền (Out-of-bounds) và bắt thuật toán chia nhỏ dữ liệu liên tục.
-
-### Bài C (strlenlexi): Phá vỡ logic phân nhóm (Bucket)
-* **Test 1 (Len Vs Lex Trap):** Chuỗi ngắn chứa ký tự lớn 'z', chuỗi dài chứa ký tự nhỏ 'a'. Đánh lừa thuật toán ưu tiên sai điều kiện (so sánh nội dung trước khi đo chiều dài).
-* **Test 2 (All Max Length):** Toàn bộ chuỗi dài 100 ký tự. Trực tiếp vô hiệu hóa khả năng chia nhóm (Bucket Sort) theo chiều dài, ép bài toán quay về độ phức tạp so sánh từ điển khổng lồ.
-* **Test 3, 4, 5 (Shifted, Periodic, Cross Duplicates):** Gây nhiễu loạn cho con trỏ bộ nhớ và làm chậm quá trình băm (hashing) chuỗi.
+* **Bài `int` (Sắp xếp số nguyên): Radix Sort (Cơ số 256)**
+    * **Cài đặt & Tối ưu:** Thuật toán phân tách số nguyên 32-bit thành 4 byte để đếm phân phối (Counting Sort) 4 lần. Để xử lý số âm, mảng được XOR với `1 << 31` (đảo bit dấu) trước và sau khi sắp xếp.
+    * **Lý do tốt nhất:** Radix Sort cho độ phức tạp thời gian $O(d \times N)$ với $d=4$ (rất nhỏ), vượt trội hoàn toàn so với Quick Sort hay Merge Sort. 
+* **Bài `strlexi` (Sắp xếp chuỗi theo từ điển): MSD Radix Sort + Fallback Insertion Sort**
+    * **Cài đặt & Tối ưu:** Thuật toán duyệt chuỗi từ trái sang phải. Chia dữ liệu vào 28 bucket (ký tự 'a'-'z' và `\0`). Khi kích thước bucket con $\le 16$, thuật toán tự động chuyển sang Insertion Sort để tránh overhead đệ quy. 
+    * **Lý do tốt nhất:** Việc chia để trị theo từng ký tự giúp loại bỏ hoàn toàn các phép so sánh chuỗi lặp lại, hiệu quả cực cao khi có nhiều chuỗi trùng tiền tố.
+* **Bài `strlenlexi` (Sắp xếp theo độ dài, rồi đến từ điển): Bucket Sort + Multi-key Quicksort (MKQS)**
+    * **Cài đặt & Tối ưu:** Sử dụng mảng danh sách liên kết (`head` và `next_idx`) để đưa các chuỗi có cùng độ dài vào từng xô (Bucket Sort) tốn $O(N)$. Sau đó, bên trong mỗi xô, sử dụng MKQS (Quicksort 3 chiều phân nhánh) để sắp xếp theo từ điển.
+    * **Lý do tốt nhất:** Giải quyết triệt để tiêu chí 1 (độ dài) trong thời gian tuyến tính. Ở tiêu chí 2, MKQS phân cụm các ký tự giống nhau rất nhanh, tránh được chi phí gọi hàm so sánh chậm chạp của `std::sort`.
 
 ---
 
-## 4. Thuật toán cài đặt tốt nhất ở Lần 2 (Phase 2)
-Để đối phó với các Killer Tests tự sinh ra ở phần 3, các thuật toán ở Lần 2 được thay thế hoàn toàn bằng các cấu trúc không sử dụng phép so sánh trực tiếp, đẩy độ phức tạp về mức tuyến tính O(N).
+## 2. Sinh Test Case (`test_gen.cpp`)
 
-* **Bài A (int): Radix Sort Base 65536 (Cơ số 16-bit).**
-  * **Cách thức tối ưu:** Thay vì chia số nguyên 32-bit thành 4 byte (phải lặp 4 lần), thuật toán gom thành 2 khối 16-bit. Do đó, toàn bộ 100.000 phần tử được sắp xếp chỉ trong đúng **2 vòng lặp (2 passes)**.
-  * **Vượt trội so với Lần 1:** Tránh hoàn toàn việc so sánh chéo O(N log N) của Quick Sort. Xử lý triệt để bẫy mảng trùng lặp (Massive Duplicates) và Zig-zag với thời gian cố định O(N). Tích hợp thủ thuật dịch bit (Bitwise XOR) để đổi số âm sang không dấu, loại bỏ lỗi điều kiện.
-  
-* **Bài B (strlexi): Multikey Quicksort (3-way String Quicksort).**
-  * **Cách thức tối ưu:** Thay vì dùng `strcmp` so sánh toàn bộ chuỗi nhiều lần, Multikey Quicksort chỉ so sánh từng ký tự từ trái qua phải. Nếu ký tự đầu đã khác nhau, thuật toán chia nhánh và **bỏ qua vĩnh viễn** phần đuôi của chuỗi đó. 
-  * **Vượt trội so với Lần 1:** Tiêu diệt triệt để bẫy "Tiền tố chung sâu" (Deep Prefix). Merge Sort ở Lần 1 phải chạy O(L * N log N), trong khi thuật toán này chạm ngưỡng O(N). Hoạt động hoàn toàn In-place trên mảng con trỏ, tối ưu hóa Cache Miss.
+File `test_gen.cpp` cung cấp command-line interface nhận tham số đầu vào (`argc, argv`) để sinh bộ test tương ứng qua cú pháp: `test_gen.<ext> <int/strlexi/strlenlexi> <1/2/3/4/5>`.
 
-* **Bài C (strlenlexi): Bucket Sort + LSD Radix Sort/Multikey.**
-  * **Cách thức tối ưu:** Đọc độ dài chuỗi một lần duy nhất bằng $O(N)$ và phân bổ vào các Bucket (head/next_idx) theo chiều dài (từ 10 đến 100). Sau đó, chỉ sắp xếp từ điển nội bộ trong các Bucket có nhiều hơn 1 phần tử.
-  * **Vượt trội so với Lần 1:** Gỡ hoàn toàn nút thắt phải so sánh chiều dài liên tục ở Lần 1. Khi kết hợp cùng Custom Fast I/O (sử dụng `getchar` cấp thấp thay cho `std::cin` và vô hiệu hóa `std::vector`), thuật toán Lần 2 lướt qua các bẫy All Max Length và Length Entropy với thời gian gần như tuyệt đối do loại bỏ 100% chi phí overhead của thư viện chuẩn.
+**Chiến lược sinh test case nhằm làm chậm các thuật toán mục tiêu:**
+
+* **Bộ test cho `int` (Nhắm vào Quicksort & Radix Sort lỗi bit):**
+  * *Test 2 (Xen kẽ max dương và min âm):* Đánh lừa các phiên bản Radix Sort không xử lý tốt bit dấu (MSB).
+  * *Test 3 & 4 (Trùng lặp nhiều `-1, 0, 1` & Mảng đảo ngược):* Đẩy Quicksort 2-way chuẩn về độ phức tạp $O(N^2)$.
+  * *Test 5 (Gần như đã sắp xếp, chỉ swap 1000 phần tử):* Gây khó dễ cho các thuật toán phân hoạch ngẫu nhiên.
+* **Bộ test cho `strlexi` (Nhắm vào String Sort thông thường & MSD Radix):**
+  * *Test 1 (Tiền tố chung siêu dài):* 98 ký tự 'a' giống hệt nhau, chỉ khác ở 2 ký tự cuối. Ép MSD Radix Sort phải đệ quy gọi hàm cấp phát bucket tới 98 lần vô ích, tạo overhead khổng lồ.
+  * *Test 2 (Chuỗi giống hệt nhau):* Kiểm tra khả năng xử lý trùng lặp, chặn đứng các thuật toán đệ quy không có điểm dừng.
+  * *Test 3 (Bảng chữ cái nhị phân 'a', 'b'):* Làm chậm các thuật toán chia 26 xô vì chúng sẽ duyệt qua 24 xô trống vô ích ở mỗi tầng.
+* **Bộ test cho `strlenlexi` (Nhắm vào sai lầm logic & Merge Sort):**
+  * *Test 1 (Độ dài xen kẽ):* Sinh 10 ký tự 'z' và 100 ký tự 'a'. Kiểm tra nghiêm ngặt xem thuật toán có ưu tiên độ dài trước từ điển hay không (chuỗi ngắn toàn 'z' phải đứng trước chuỗi dài toàn 'a').
+  * *Test 5 (Tập mẫu nhỏ lặp lại nhiều lần):* Ép thuật toán phải xử lý số lượng phần tử trùng lặp cực lớn, làm cạn kiệt bộ nhớ nếu dùng các phiên bản Merge Sort không tối ưu.
+
+---
+
+## 3. Thuật toán cài đặt tốt nhất ở lần thứ hai (Phase 2) & Phương pháp tối ưu tiếp nối
+
+Ở Phase 2, thuật toán cốt lõi được giữ lại nhưng được nâng cấp bằng kỹ thuật quản lý bộ nhớ cục bộ và **Custom Fast I/O**, phá vỡ mọi giới hạn trễ của hệ điều hành.
+
+* **Bài `int`:**
+    * *Cải tiến:* Thay vì dùng `cin/cout`, đọc toàn bộ stdin vào buffer bằng `fread`, tự parsing chuỗi thành số nguyên. Output được ghi vào `out_buf` và xuất ra bằng 1 lệnh `fwrite`.
+    * *Tối ưu:* Giảm thiểu triệt để thời gian chết do I/O, biến bài toán thành In-memory processing thuần túy.
+* **Bài `strlexi`:**
+    * *Cải tiến:* Kết hợp MSD Radix Sort với mảng con trỏ. Chuỗi không được copy mà chỉ lưu con trỏ trỏ thẳng vào `buf` đầu vào. Ký tự ngắt (space/newline) được thay thành `\0`. Hàm fallback Insertion Sort dùng con trỏ để duyệt thủ công thay vì dùng `strcmp`.
+    * *Tối ưu:* Loại bỏ 100% chi phí sao chép dữ liệu và cấp phát động, thuật toán chỉ hoán đổi vị trí của các con trỏ nhẹ nhàng trên RAM.
+* **Bài `strlenlexi`:**
+    * *Cải tiến:* Chuyển từ mảng danh sách liên kết sang `std::vector<vector<string>>` để phân xô theo độ dài. Đột phá lớn nhất là thay thế MKQS bằng **Custom Merge Sort kết hợp `std::move()`**.
+    * *Tối ưu:* Thay vì tốn kém tài nguyên copy chuỗi vào mảng tạm khi Merge, hàm `std::move()` trong C++11 chuyển giao quyền sở hữu bộ nhớ với độ phức tạp $O(1)$. Thuật toán sắp xếp mượt mà, ổn định (stable) và tận dụng được cache CPU tốt hơn rất nhiều so với lần 1.
