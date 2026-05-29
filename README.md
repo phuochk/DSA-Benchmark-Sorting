@@ -6,9 +6,9 @@
 - **Họ tên sinh viên:** Nguyễn Bá Phước
 - **MSSV:** 25120422
 - **Họ tên sinh viên:** Lê Tấn Tài
-- **MSSV:** 25120422
-- **Họ tên sinh viên:** Nguyễn Bá Phước
-- **MSSV:** 25120422
+- **MSSV:** 25120432
+- **Họ tên sinh viên:** Nguyễn Xuân Thái Tuấn
+- **MSSV:** 25120462
 ---
 
 ## 1. Thuật toán cài đặt tốt nhất ở lần chạy đầu tiên (Phase 1)
