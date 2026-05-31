@@ -34,15 +34,22 @@ File `test_gen.cpp` cung cấp command-line interface nhận tham số đầu v�
 **Chiến lược sinh test case nhằm làm chậm các thuật toán mục tiêu:**
 
 * **Bộ test cho `int` (Nhắm vào Quicksort & Radix Sort lỗi bit):**
+  * *Test 1 100.000 số nguyên 32-bit được sinh ngẫu nhiên trên toàn miền giá trị. Đây là bộ dữ liệu benchmark tổng quát, không nhắm đến việc gây bất lợi cho một thuật toán cụ thể mà dùng để đánh giá hiệu năng thực tế trên dữ liệu phân bố đều.
   * *Test 2 (Xen kẽ max dương và min âm):* Đánh lừa các phiên bản Radix Sort không xử lý tốt bit dấu (MSB).
-  * *Test 3 & 4 (Trùng lặp nhiều `-1, 0, 1` & Mảng đảo ngược):* Đẩy Quicksort 2-way chuẩn về độ phức tạp $O(N^2)$.
+  * *Test 3 (Trùng lặp nhiều `-1, 0, 1` & Mảng đảo ngược):* Đẩy Quicksort 2-way chuẩn về độ phức tạp $O(N^2)$.
+  * *Test 4 Dãy số giảm dần từ 100.000 xuống 1. Đây là trường hợp kinh điển có thể làm các phiên bản Quick Sort chọn pivot không tốt (pivot đầu hoặc pivot cuối) suy giảm hiệu năng nghiêm trọng.
   * *Test 5 (Gần như đã sắp xếp, chỉ swap 1000 phần tử):* Gây khó dễ cho các thuật toán phân hoạch ngẫu nhiên.
 * **Bộ test cho `strlexi` (Nhắm vào String Sort thông thường & MSD Radix):**
   * *Test 1 (Tiền tố chung siêu dài):* 98 ký tự 'a' giống hệt nhau, chỉ khác ở 2 ký tự cuối. Ép MSD Radix Sort phải đệ quy gọi hàm cấp phát bucket tới 98 lần vô ích, tạo overhead khổng lồ.
   * *Test 2 (Chuỗi giống hệt nhau):* Kiểm tra khả năng xử lý trùng lặp, chặn đứng các thuật toán đệ quy không có điểm dừng.
   * *Test 3 (Bảng chữ cái nhị phân 'a', 'b'):* Làm chậm các thuật toán chia 26 xô vì chúng sẽ duyệt qua 24 xô trống vô ích ở mỗi tầng.
+  * *Test 4 Các chuỗi chỉ gồm ký tự 'a', độ dài tăng từ 10 đến 100 và lặp lại nhiều lần. Do các chuỗi có tiền tố chung rất dài, những thuật toán dựa trên so sánh chuỗi trực tiếp phải liên tục duyệt qua gần như toàn bộ nội dung chuỗi trước khi phân biệt được thứ tự.
+  * *Test 5 Chỉ gồm 26 mẫu chuỗi độ dài 100, từ 'z' đến 'a', lặp lại liên tục. Bộ dữ liệu này tạo ra số lượng khóa trùng rất lớn, gây bất lợi cho các biến thể Quick Sort phân hoạch hai chiều, trong khi các thuật toán xử lý tốt dữ liệu trùng lặp sẽ có lợi thế rõ rệt.
 * **Bộ test cho `strlenlexi` (Nhắm vào sai lầm logic & Merge Sort):**
   * *Test 1 (Độ dài xen kẽ):* Sinh 10 ký tự 'z' và 100 ký tự 'a'. Kiểm tra nghiêm ngặt xem thuật toán có ưu tiên độ dài trước từ điển hay không (chuỗi ngắn toàn 'z' phải đứng trước chuỗi dài toàn 'a').
+  * *Test 2 10.000 chuỗi ngẫu nhiên gồm các ký tự 'a'–'z', tất cả đều có độ dài 100. Vì toàn bộ dữ liệu rơi vào cùng một nhóm độ dài, mọi lợi thế của bước phân bucket theo độ dài gần như bị triệt tiêu, buộc thuật toán phải xử lý hoàn toàn bằng bước sắp xếp từ điển.
+  * *Test 3 Mỗi chuỗi gồm toàn ký tự 'a' và chỉ chứa duy nhất một ký tự 'b' ở một vị trí khác nhau. Các chuỗi có tiền tố chung rất dài, khiến những thuật toán phải so sánh chuỗi nhiều lần chịu chi phí lớn do liên tục quét sâu vào nội dung chuỗi.
+  * *Test 4 Độ dài chuỗi được sinh ngẫu nhiên trong khoảng 10–100, còn nội dung được tạo từ mẫu 'abc' lặp đi lặp lại. Bộ dữ liệu này tạo ra nhiều chuỗi giống hoặc gần giống nhau, giúp đánh giá khả năng xử lý dữ liệu có mức độ trùng lặp và tương đồng cao.
   * *Test 5 (Tập mẫu nhỏ lặp lại nhiều lần):* Ép thuật toán phải xử lý số lượng phần tử trùng lặp cực lớn, làm cạn kiệt bộ nhớ nếu dùng các phiên bản Merge Sort không tối ưu.
 
 ---
