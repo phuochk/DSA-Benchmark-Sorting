@@ -2,7 +2,7 @@
 
 ## Thông tin cá nhân
 - **Tên môn học:** Cấu trúc dữ liệu và giải thuật
-- **Thời gian học:** 2025-2026
+- **Thời gian học:** HK 2 từ tháng 3 tới tháng 6 2026
 - **Họ tên sinh viên:** Nguyễn Bá Phước
 - **MSSV:** 25120422
 - **Họ tên sinh viên:** Lê Tấn Tài
