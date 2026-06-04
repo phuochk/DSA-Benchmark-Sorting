@@ -34,7 +34,7 @@ File `test_gen.cpp` cung cấp command-line interface nhận tham số đầu v�
 **Chiến lược sinh test case nhằm làm chậm các thuật toán mục tiêu:**
 
 * **Bộ test cho `int` (Nhắm vào Quicksort & Radix Sort lỗi bit):**
-  * *Test 1 100.000 số nguyên 32-bit được sinh ngẫu nhiên trên toàn miền giá trị. Đây là bộ dữ liệu benchmark tổng quát, không nhắm đến việc gây bất lợi cho một thuật toán cụ thể mà dùng để đánh giá hiệu năng thực tế trên dữ liệu phân bố đều.
+  * Test 1 100.000 số nguyên 32-bit được sinh ngẫu nhiên trên toàn miền giá trị. Đây là bộ dữ liệu benchmark tổng quát, không nhắm đến việc gây bất lợi cho một thuật toán cụ thể mà dùng để đánh giá hiệu năng thực tế trên dữ liệu phân bố đều.
   * *Test 2 (Xen kẽ max dương và min âm):* Đánh lừa các phiên bản Radix Sort không xử lý tốt bit dấu (MSB).
   * *Test 3 (Trùng lặp nhiều `-1, 0, 1` & Mảng đảo ngược):* Đẩy Quicksort 2-way chuẩn về độ phức tạp $O(N^2)$.
   * *Test 4 Dãy số giảm dần từ 100.000 xuống 1. Đây là trường hợp kinh điển có thể làm các phiên bản Quick Sort chọn pivot không tốt (pivot đầu hoặc pivot cuối) suy giảm hiệu năng nghiêm trọng.
