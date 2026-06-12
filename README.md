@@ -65,5 +65,5 @@ File `test_gen.cpp` cung cấp command-line interface nhận tham số đầu v�
     * *Cải tiến:* Kết hợp MSD Radix Sort với mảng con trỏ. Chuỗi không được copy mà chỉ lưu con trỏ trỏ thẳng vào `buf` đầu vào. Ký tự ngắt (space/newline) được thay thành `\0`. Hàm fallback Insertion Sort dùng con trỏ để duyệt thủ công thay vì dùng `strcmp`.
     * *Tối ưu:* Loại bỏ 100% chi phí sao chép dữ liệu và cấp phát động, thuật toán chỉ hoán đổi vị trí của các con trỏ nhẹ nhàng trên RAM.
 * **Bài `strlenlexi`:**
-    * *Cải tiến:* Chuyển từ mảng danh sách liên kết sang `std::vector<vector<string>>` để phân xô theo độ dài. Đột phá lớn nhất là thay thế MKQS bằng **Custom Merge Sort kết hợp `std::move()`**.
-    * *Tối ưu:* Thay vì tốn kém tài nguyên copy chuỗi vào mảng tạm khi Merge, hàm `std::move()` trong C++11 chuyển giao quyền sở hữu bộ nhớ với độ phức tạp $O(1)$. Thuật toán sắp xếp mượt mà, ổn định (stable) và tận dụng được cache CPU tốt hơn rất nhiều so với lần 1.
+    * *Cải tiến:* Chuyển từ mảng danh sách liên kết sang `std::vector<vector<string>>` để phân xô theo độ dài. **.
+    * *Tối ưu:*Thuật toán sắp xếp mượt mà, ổn định (stable) và tận dụng được cache CPU tốt hơn rất nhiều so với lần 1.
